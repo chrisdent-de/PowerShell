@@ -2,7 +2,18 @@ trigger: none
 
 # needed to disable CI trigger and allow manual trigger
 # when the branch is same as pipeline source, the latest build from the source is used.
+# when the branch is same as pipeline source, the latest build from the source is used.
 # all environment used are for manual tasks and approvals.
+
+parameters:
+  - name: skipPackagesMsftComPublish
+    displayName: Skip actual publishing to Packages.microsoft.com, AFTER we upload it.  Used to test the publishing script.
+    default: false
+    type: boolean
+  - name: skipNugetPublish
+    displayName: Skip nuget publishing.  Used in testing publishing stage.
+    default: false
+    type: boolean
 
 parameters:
   - name: skipPackagesMsftComPublish
@@ -34,6 +45,7 @@ resources:
     endpoint: ComplianceGHRepo
     name: PowerShell/compliance
     ref: master
+    ref: main-mirror
 
 variables:
   - name: runCodesignValidationInjection
@@ -359,6 +371,8 @@ stages:
     - template: templates/release-ReleaseToNuGet.yml
       parameters:
         skipPublish: ${{ parameters.skipNugetPublish }}
+      parameters:
+        skipPublish: ${{ parameters.skipNugetPublish }}
 
   - job: PublishPkgsMsftCom
 
@@ -373,6 +387,8 @@ stages:
     - group: 'packages.microsoft.com'
     steps:
     - template: templates/release-PublishPackageMsftCom.yml
+      parameters:
+        skipPublish: ${{ parameters.skipPackagesMsftComPublish }}
       parameters:
         skipPublish: ${{ parameters.skipPackagesMsftComPublish }}
 
