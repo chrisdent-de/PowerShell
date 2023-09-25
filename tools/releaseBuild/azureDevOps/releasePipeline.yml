@@ -230,7 +230,7 @@ stages:
         Get-ChildItem -Path $(Build.SourcesDirectory)
         Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
-        Set-AzDoAuthToken -Token $(powershellRelExecutionPat)
+        Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         $packageBuildID = $(resources.pipeline.releasePipeline.runID)
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 10 -BuildArguments @{ POWERSHELL_PACKAGE_BUILD_BUILDID = $packageBuildID } -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
@@ -273,7 +273,7 @@ stages:
     - pwsh: |
         Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
-        Set-AzDoAuthToken -Token $(powershellRelExecutionPat)
+        Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $azDOBuild = Get-AzDOBuild -buildDefinitionId 10 -MaximumResult 100  | Where-Object { $_.tags -in $metadata.ReleaseVersion }
         $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
@@ -459,7 +459,7 @@ stages:
     - pwsh: |
         Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
-        Set-AzDoAuthToken -Token $(powershellRelExecutionPat)
+        Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 49 -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
         Write-Verbose -Verbose "Kicked off snap build: $($buildInvocationInfo.WebUrl)"
@@ -500,7 +500,7 @@ stages:
     - pwsh: |
         Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
-        Set-AzDoAuthToken -Token $(powershellRelExecutionPat)
+        Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $azDOBuild = Get-AzDOBuild -buildDefinitionId 49 -MaximumResult 100  | Where-Object { $_.tags -in $metadata.ReleaseVersion }
         $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
@@ -604,7 +604,7 @@ stages:
     - pwsh: |
         Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoProjectInfo -ProjectOwner mscodehub -ProjectName PowerShellCore
-        Set-AzDoAuthToken -Token $(mscodehubBuildExecutionPat)
+        Set-AzDoAuthToken -Token $(MSCODEHUBPAT)
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $releaseVersion = $metadata.ReleaseVersion -replace '^v',''
         $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
