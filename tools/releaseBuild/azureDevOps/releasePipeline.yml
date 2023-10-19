@@ -45,7 +45,6 @@ resources:
     endpoint: ComplianceGHRepo
     name: PowerShell/compliance
     ref: master
-    ref: main-mirror
 
 variables:
   - name: runCodesignValidationInjection
@@ -359,7 +358,6 @@ stages:
 - stage: PublishPackages
   displayName: Publish packages
   dependsOn: GitHubManualTasks
-  timeoutInMinutes: 120
   jobs:
   - job: PublishNuget
 
